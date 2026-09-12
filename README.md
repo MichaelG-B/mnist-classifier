@@ -3,6 +3,10 @@
 Django + TensorFlow web app that classifies a hand-drawn digit uploaded as a
 28x28 CSV. Deployed on AWS Lightsail via Docker, exposed publicly with ngrok.
 
+**New to the project? Read [docs/WORKFLOW.md](docs/WORKFLOW.md) first** — it
+covers roles, how the pieces connect, and why there is placeholder code in the
+repo.
+
 ## Team
 
 | Person | Role | Owns |
