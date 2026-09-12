@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% comment %}
+  Login page.  OWNER: Person D (Frontend).
+
+  The path templates/registration/login.html is NOT arbitrary -- Django looks
+  for it there specifically. Do not rename or move it.
+
+  The {% csrf_token %} tag must stay inside the <form> or login silently fails.
+{% endcomment %}
+
+{% block content %}
+  <h1>Sign in</h1>
+  {% if form.errors %}<p style="color:#991b1b">Wrong username or password.</p>{% endif %}
+  <form method="post" class="placeholder">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Sign in</button>
+  </form>
+{% endblock %}

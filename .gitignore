@@ -1,0 +1,30 @@
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Django
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+media/
+*.log
+
+# IMPORTANT: db.sqlite3 is ignored on purpose. It is the local database.
+# If we committed it, all four of us would constantly overwrite each other's
+# accounts. Everyone keeps their own local copy; the one that counts lives on
+# the AWS server.
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/

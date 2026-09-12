@@ -1,0 +1,22 @@
+# OWNER: Person A. Nobody else edits this file.
+
+Django==5.2.*
+
+# TensorFlow. The two lines below are NOT a mistake -- pip reads the marker
+# after the semicolon and installs exactly one of them.
+#
+# tensorflow-cpu is the right choice on the Linux server: the regular package
+# bundles NVIDIA GPU drivers, hundreds of megabytes that are useless on a
+# machine with no graphics card and a common cause of out-of-memory build
+# failures on the free-tier AWS instance.
+#
+# But tensorflow-cpu publishes NO macOS arm64 wheels, so on an Apple Silicon
+# Mac that line fails with "No matching distribution found". Those machines get
+# the regular tensorflow package, which does ship arm64 wheels and is CPU-only
+# on macOS anyway (there is no official Mac GPU support).
+tensorflow-cpu==2.21.*; sys_platform != "darwin"
+tensorflow==2.21.*;     sys_platform == "darwin"
+
+numpy
+pillow
+matplotlib

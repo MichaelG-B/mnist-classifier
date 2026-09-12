@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% comment %}
+  Result page.  OWNER: Person D (Frontend).
+
+  Build and style this against http://localhost:8000/mock/ -- you do NOT need
+  to wait for Person C's real backend or Person B's trained model. Refresh for
+  new random data.
+
+  CONTRACT (kickoff section 4). These variables are always present:
+    prediction     int    0-9, the predicted digit
+    confidence     float  0.0-1.0, probability of the winner
+    probabilities  list   10 floats, index = digit
+    image_uri      str    "data:image/png;base64,..." -> goes in <img src="">
+    error          str or None
+{% endcomment %}
+
+{% block content %}
+  {% if is_mock %}
+    <p style="background:#fef3c7;padding:.75rem;border-radius:.5rem">
+      MOCK PAGE &mdash; this data is random. Person D builds here.
+    </p>
+  {% endif %}
+
+  <div class="placeholder">
+    <h1>Prediction: {{ prediction }}</h1>
+    <p>Confidence: {{ confidence|floatformat:3 }}</p>
+
+    {% if image_uri %}
+      <img src="{{ image_uri }}" style="image-rendering: pixelated; width: 280px;">
+    {% else %}
+      <p><em>(no image in mock mode)</em></p>
+    {% endif %}
+
+    <ul>
+      {% for p in probabilities %}
+        <li>{{ forloop.counter0 }}: {{ p|floatformat:4 }}</li>
+      {% endfor %}
+    </ul>
+
+    <p><a href="/">Classify another image</a></p>
+  </div>
+{% endblock %}

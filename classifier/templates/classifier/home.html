@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% comment %}
+  Upload page.  OWNER: Person D (Frontend).
+  Person C wires the real form in Session C3; the `form` and `error` variables
+  will be supplied then. Style it now.
+{% endcomment %}
+
+{% block content %}
+  <h1>Upload a digit</h1>
+  {% if error %}<p style="color:#991b1b">{{ error }}</p>{% endif %}
+  <div class="placeholder">
+    <p>Person C adds the upload form here in Session C3.</p>
+  </div>
+{% endblock %}
