@@ -11,10 +11,10 @@ repo.
 
 | Person | Role | Owns |
 |---|---|---|
-| | A — Infrastructure | `Dockerfile`, `requirements.txt`, `config/settings.py`, AWS, ngrok, deploys |
-| | B — ML & Writeup | `classifier/ml/`, `static/analysis/`, `notebooks/`, `samples/`, article text |
-| | C — Backend | `classifier/views.py`, `forms.py`, `utils.py`, `urls.py`, `config/urls.py` |
-| | D — Frontend | `classifier/templates/`, `static/css/` |
+| Michael Beyer | A — Infrastructure | `Dockerfile`, `requirements.txt`, `config/settings.py`, AWS, ngrok, deploys |
+| Harelle Keli | B — ML & Writeup | `classifier/ml/`, `static/analysis/`, `notebooks/`, `samples/`, article text |
+| Pri Balekai | C — Backend | `classifier/views.py`, `forms.py`, `utils.py`, `urls.py`, `config/urls.py` |
+| Panav Ladha | D — Frontend | `classifier/templates/`, `static/css/` |
 
 **Nobody edits a file they do not own.** Message the owner instead. This one
 rule removes most merge conflicts.
