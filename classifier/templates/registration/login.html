@@ -1,19 +1,38 @@
-{% extends "base.html" %}
-{% comment %}
-  Login page.  OWNER: Person D (Frontend).
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log in — MNIST Classifier</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="no-rules">
+  <div class="auth-shell">
+    <div class="auth-card">
+      <h1 class="mono" style="font-family:'IBM Plex Mono',monospace;font-size:1rem;letter-spacing:0.02em;">mnist<span style="color:var(--indigo);">//</span>classifier</h1>
+      <p class="lede">Log in to upload and classify a digit.</p>
 
-  The path templates/registration/login.html is NOT arbitrary -- Django looks
-  for it there specifically. Do not rename or move it.
+      {% if form.errors %}
+        <ul class="errorlist">
+          <li>Your username and password didn't match. Try again.</li>
+        </ul>
+      {% endif %}
 
-  The {% csrf_token %} tag must stay inside the <form> or login silently fails.
-{% endcomment %}
-
-{% block content %}
-  <h1>Sign in</h1>
-  {% if form.errors %}<p style="color:#991b1b">Wrong username or password.</p>{% endif %}
-  <form method="post" class="placeholder">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Sign in</button>
-  </form>
-{% endblock %}
+      <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <div class="field">
+          <label for="id_username">Username</label>
+          <input type="text" name="username" id="id_username" autofocus required>
+        </div>
+        <div class="field">
+          <label for="id_password">Password</label>
+          <input type="password" name="password" id="id_password" required>
+        </div>
+        <input type="hidden" name="next" value="{{ next }}">
+        <button type="submit" class="btn">Log in</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
