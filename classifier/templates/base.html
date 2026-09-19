@@ -1,34 +1,40 @@
-{% comment %}
-  Base template that every other page extends.
-  OWNER: Person D (Frontend). Nobody else edits templates/.
-
-  This is a deliberately PLAIN placeholder so you can see it works.
-  Person D replaces it in Session D1 with the real design.
-  Requirement 7: 50% of the grade is appearance.
-{% endcomment %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}MNIST Classifier{% endblock %}</title>
-  {% comment %} Person D: add your CSS framework here in Session D1. {% endcomment %}
-  <style>
-    body { font-family: system-ui, sans-serif; margin: 0; background: #f8fafc; color: #1e293b; }
-    nav  { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 1rem 1.5rem; }
-    main { max-width: 56rem; margin: 0 auto; padding: 2.5rem 1.5rem; }
-    .placeholder { border: 2px dashed #cbd5e1; padding: 1rem; border-radius: .5rem; }
-  </style>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body>
-  <nav>
-    <strong>MNIST Classifier</strong>
-    {% if user.is_authenticated %}
-      &mdash; signed in as {{ user.username }}
-    {% endif %}
-  </nav>
-  <main>
+<body class="{% block bodyclass %}{% endblock %}">
+  <div class="shell">
+    <div class="topbar">
+      <!--
+        These use Django's named-url patterns confirmed from the live
+        server's 404 debug page: name='home' for "/" and name='mock_result'
+        for "/mock/". If Pri renames either route later, these links keep
+        working automatically -- no changes needed here.
+      -->
+      <a class="wordmark" href="{% url 'home' %}">mnist<span>//</span>classifier</a>
+      <nav class="topnav">
+        <a href="{% url 'home' %}" class="{% block navwriteup %}{% endblock %}">write-up</a>
+        <a href="{% url 'mock_result' %}" class="{% block navclassify %}{% endblock %}">classify a digit</a>
+        {% if user.is_authenticated %}
+        <form method="post" action="/accounts/logout/">
+          {% csrf_token %}
+          <button type="submit" class="linklike">log out ({{ user.username }})</button>
+        </form>
+        {% endif %}
+      </nav>
+    </div>
+
     {% block content %}{% endblock %}
-  </main>
+
+    <footer class="sitefoot">
+      <span>Group Project 1 -- Image Classification</span>
+      <span><a href="https://github.com/MichaelG-B/mnist-classifier">source on GitHub</a></span>
+    </footer>
+  </div>
 </body>
 </html>

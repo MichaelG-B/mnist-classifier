@@ -1,14 +1,119 @@
 {% extends "base.html" %}
-{% comment %}
-  Upload page.  OWNER: Person D (Frontend).
-  Person C wires the real form in Session C3; the `form` and `error` variables
-  will be supplied then. Style it now.
-{% endcomment %}
+{% load static %}
+{% block title %}How we built it — MNIST Classifier{% endblock %}
+{% block navwriteup %}active{% endblock %}
 
 {% block content %}
-  <h1>Upload a digit</h1>
-  {% if error %}<p style="color:#991b1b">{{ error }}</p>{% endif %}
-  <div class="placeholder">
-    <p>Person C adds the upload form here in Session C3.</p>
+<div class="hero">
+  <div>
+    <div class="kicker">a lab notebook, published</div>
+    <h1>Teaching a network to read handwriting</h1>
+    <p class="lede">
+      This page is the write-up: how we built a convolutional network that
+      reads 28&times;28 grayscale digits, what worked, what didn't, and where
+      it still gets confused. <a href="{% url 'mock_result' %}">Try the classifier</a> on your
+      own digit once you've read this.
+    </p>
   </div>
+  <!-- literal pixel grid of a "5" -- placeholder art until real digit
+       examples are dropped in; keep the <i> count at 144 (12x12) -->
+  <div class="pixel-grid" aria-hidden="true">
+    <i></i><i></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i>
+    <i></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    <i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    <i></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    <i></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    <i></i><i></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i>
+    <i></i><i></i><i></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i>
+    <i></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i>
+    <i></i><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    <i></i><i></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+  </div>
+</div>
+
+<article>
+
+  <div class="stat-row">
+    <div class="stat"><span class="n">99.59%</span><span class="label">test accuracy</span></div>
+    <div class="stat"><span class="n">9,959 / 10,000</span><span class="label">correctly classified</span></div>
+    <div class="stat"><span class="n">41</span><span class="label">misclassified</span></div>
+  </div>
+
+  <h2>The approach</h2>
+  <p>
+    <!-- HARELLE: replace this paragraph with your architecture write-up.
+         Talk through the layers you tried, filter sizes/counts, pooling,
+         dropout, and what the validation split (0.2) showed you along the
+         way. Keep it in first person -- this is a lab notebook, not a spec
+         sheet. -->
+    We trained a convolutional network on MNIST using a validation split
+    rather than cross-validation, since retraining a CNN repeatedly for
+    cross-validation is slow. Several architectures were tried &mdash;
+    varying the number and size of convolutional filters, the number of
+    pooling layers, and the use of dropout &mdash; before settling on the
+    configuration described below.
+  </p>
+
+  <div class="margin-note">
+    tip that saved us real time: keep the trained model and its confusion
+    matrix in memory before closing the notebook &mdash; regenerating both
+    means retraining from scratch.
+  </div>
+
+  <h2>What worked, what didn't</h2>
+  <p>
+    <!-- HARELLE: this is the "what worked well and what didn't" requirement
+         from the assignment. Be specific: which change moved the needle,
+         which didn't, and what you'd try next time. -->
+    Placeholder &mdash; swap in the real comparison of architectures here.
+  </p>
+
+  <h2>Where it gets confused</h2>
+  <p>
+    Of 10,000 test images, 41 were misclassified. Below are a few examples,
+    alongside the network's confidence for each of the ten digits.
+  </p>
+
+  <div class="figure-row">
+    <figure>
+      <img src="{% static 'analysis/misclassified_1.png' %}" alt="A misclassified digit example">
+      <figcaption>predicted 4, actually 9 &mdash; confidence 0.61</figcaption>
+    </figure>
+    <figure>
+      <img src="{% static 'analysis/misclassified_2.png' %}" alt="A misclassified digit example">
+      <figcaption>predicted 3, actually 5 &mdash; confidence 0.54</figcaption>
+    </figure>
+  </div>
+
+  <p>
+    <!-- HARELLE: answer "what are the common mix-ups and why" here. The
+         classic MNIST confusions are 4/9, 3/5/8, and 7/1 -- but write the
+         real answer from your confusion matrix, not the classic answer. -->
+    The most common confusions cluster around digits that share a stroke
+    shape when handwritten quickly &mdash; a placeholder answer until the
+    real confusion-matrix analysis is dropped in.
+  </p>
+
+  <figure>
+    <img src="{% static 'analysis/confusion_matrix.png' %}" alt="Confusion matrix heatmap">
+    <figcaption>confusion matrix, test set</figcaption>
+  </figure>
+
+  <h2>Will we ever hit 100%?</h2>
+  <p>
+    <!-- HARELLE: your actual answer to "do you think it would ever be
+         possible to get 100% accuracy" goes here. -->
+    Placeholder &mdash; swap in your reasoning here.
+  </p>
+
+  <h2>Try it yourself</h2>
+  <p>
+    Upload a 28&times;28 CSV of pixel intensities on the
+    <a href="{% url 'mock_result' %}">classify page</a> and the network will tell you what it
+    sees.
+  </p>
+
+</article>
 {% endblock %}

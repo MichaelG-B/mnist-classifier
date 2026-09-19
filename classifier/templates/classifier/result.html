@@ -1,42 +1,100 @@
 {% extends "base.html" %}
-{% comment %}
-  Result page.  OWNER: Person D (Frontend).
-
-  Build and style this against http://localhost:8000/mock/ -- you do NOT need
-  to wait for Person C's real backend or Person B's trained model. Refresh for
-  new random data.
-
-  CONTRACT (kickoff section 4). These variables are always present:
-    prediction     int    0-9, the predicted digit
-    confidence     float  0.0-1.0, probability of the winner
-    probabilities  list   10 floats, index = digit
-    image_uri      str    "data:image/png;base64,..." -> goes in <img src="">
-    error          str or None
-{% endcomment %}
+{% block title %}Classify a digit — MNIST Classifier{% endblock %}
+{% block navclassify %}active{% endblock %}
+{% block bodyclass %}no-rules{% endblock %}
 
 {% block content %}
-  {% if is_mock %}
-    <p style="background:#fef3c7;padding:.75rem;border-radius:.5rem">
-      MOCK PAGE &mdash; this data is random. Person D builds here.
-    </p>
-  {% endif %}
+<h1>Classify a digit</h1>
+<p class="hint" style="margin-bottom:1.6rem;">
+  Upload a CSV of a 28&times;28 handwritten digit -- 28 rows, 28 columns,
+  no header row. Pixel values can be 0-255 or already scaled to 0-1;
+  the model figures out which.
+</p>
 
-  <div class="placeholder">
-    <h1>Prediction: {{ prediction }}</h1>
-    <p>Confidence: {{ confidence|floatformat:3 }}</p>
+{% if error %}
+  <div class="alert error">{{ error }}</div>
+{% endif %}
 
-    {% if image_uri %}
-      <img src="{{ image_uri }}" style="image-rendering: pixelated; width: 280px;">
-    {% else %}
-      <p><em>(no image in mock mode)</em></p>
-    {% endif %}
+<div class="workbench">
 
-    <ul>
-      {% for p in probabilities %}
-        <li>{{ forloop.counter0 }}: {{ p|floatformat:4 }}</li>
-      {% endfor %}
-    </ul>
-
-    <p><a href="/">Classify another image</a></p>
+  <div class="panel">
+    <h2>1. Upload</h2>
+    <form method="post" enctype="multipart/form-data" id="upload-form">
+      {% csrf_token %}
+      <div class="dropzone" id="dropzone">
+        <p>Drag a .csv file here, or choose one below.</p>
+        <input type="file" name="csv_file" id="csv_file" accept=".csv" required>
+        <p class="filename" id="filename"></p>
+      </div>
+      <button type="submit" class="btn">Classify</button>
+      <a href="{% url 'mock_result' %}" class="btn ghost" style="margin-left:0.6rem;">Start over</a>
+    </form>
   </div>
+
+  <div class="panel">
+    <h2>2. Result</h2>
+
+    {% if probabilities %}
+      <div class="result-head">
+        {% if image_uri %}
+          <img src="{{ image_uri }}" alt="Uploaded digit, rendered from the CSV">
+        {% endif %}
+        <div>
+          <div class="digit">{{ prediction }}</div>
+          <div class="confidence">confidence {% widthratio confidence 1 100 %}%</div>
+        </div>
+      </div>
+
+      <div class="bars">
+        {% for p in probabilities %}
+          <div class="bar-row {% if forloop.counter0|stringformat:'s' == prediction|stringformat:'s' %}top{% endif %}">
+            <span class="digit-label">{{ forloop.counter0 }}</span>
+            <span class="bar-track">
+              <span class="bar-fill" style="width: {% widthratio p 1 100 %}%;"></span>
+            </span>
+            <span class="bar-pct">{% widthratio p 1 100 %}%</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="hint">Upload a CSV on the left to see a prediction here.</p>
+    {% endif %}
+  </div>
+
+</div>
+
+<script>
+  // Cosmetic only: shows the chosen filename and a drag-over highlight.
+  // None of this is required for the upload to work -- the <form> above
+  // posts normally even with JS disabled.
+  (function () {
+    var input = document.getElementById('csv_file');
+    var zone = document.getElementById('dropzone');
+    var label = document.getElementById('filename');
+    if (!input || !zone) return;
+
+    input.addEventListener('change', function () {
+      label.textContent = input.files.length ? input.files[0].name : '';
+    });
+
+    ['dragenter', 'dragover'].forEach(function (evt) {
+      zone.addEventListener(evt, function (e) {
+        e.preventDefault();
+        zone.classList.add('drag');
+      });
+    });
+    ['dragleave', 'drop'].forEach(function (evt) {
+      zone.addEventListener(evt, function (e) {
+        e.preventDefault();
+        zone.classList.remove('drag');
+      });
+    });
+    zone.addEventListener('drop', function (e) {
+      if (e.dataTransfer.files.length) {
+        input.files = e.dataTransfer.files;
+        label.textContent = e.dataTransfer.files[0].name;
+      }
+    });
+  })();
+</script>
 {% endblock %}
