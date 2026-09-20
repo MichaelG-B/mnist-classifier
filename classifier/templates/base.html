@@ -12,14 +12,14 @@
     <div class="topbar">
       <!--
         These use Django's named-url patterns confirmed from the live
-        server's 404 debug page: name='home' for "/" and name='mock_result'
+        server's 404 debug page: name='home' for "/" and name='classify' (renamed from mock_result per Michael/Pri's PR #4 discussion)
         for "/mock/". If Pri renames either route later, these links keep
         working automatically -- no changes needed here.
       -->
       <a class="wordmark" href="{% url 'home' %}">mnist<span>//</span>classifier</a>
       <nav class="topnav">
         <a href="{% url 'home' %}" class="{% block navwriteup %}{% endblock %}">write-up</a>
-        <a href="{% url 'mock_result' %}" class="{% block navclassify %}{% endblock %}">classify a digit</a>
+        <a href="{% url 'classify' %}" class="{% block navclassify %}{% endblock %}">classify a digit</a>
         {% if user.is_authenticated %}
         <form method="post" action="/accounts/logout/">
           {% csrf_token %}

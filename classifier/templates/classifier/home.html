@@ -11,7 +11,7 @@
     <p class="lede">
       This page is the write-up: how we built a convolutional network that
       reads 28&times;28 grayscale digits, what worked, what didn't, and where
-      it still gets confused. <a href="{% url 'mock_result' %}">Try the classifier</a> on your
+      it still gets confused. <a href="{% url 'classify' %}">Try the classifier</a> on your
       own digit once you've read this.
     </p>
   </div>
@@ -62,6 +62,11 @@
     means retraining from scratch.
   </div>
 
+  <figure>
+    <img src="{% static 'analysis/training_curves.png' %}" alt="Training and validation accuracy/loss over epochs">
+    <figcaption>training and validation curves</figcaption>
+  </figure>
+
   <h2>What worked, what didn't</h2>
   <p>
     <!-- HARELLE: this is the "what worked well and what didn't" requirement
@@ -78,12 +83,12 @@
 
   <div class="figure-row">
     <figure>
-      <img src="{% static 'analysis/misclassified_1.png' %}" alt="A misclassified digit example">
-      <figcaption>predicted 4, actually 9 &mdash; confidence 0.61</figcaption>
+      <img src="{% static 'analysis/correct_predictions.png' %}" alt="A sample of correctly classified test-set digits">
+      <figcaption>a sample of correctly classified test-set digits</figcaption>
     </figure>
     <figure>
-      <img src="{% static 'analysis/misclassified_2.png' %}" alt="A misclassified digit example">
-      <figcaption>predicted 3, actually 5 &mdash; confidence 0.54</figcaption>
+      <img src="{% static 'analysis/misclassified_predictions.png' %}" alt="A sample of misclassified test-set digits">
+      <figcaption>a sample of misclassified test-set digits</figcaption>
     </figure>
   </div>
 
@@ -111,7 +116,7 @@
   <h2>Try it yourself</h2>
   <p>
     Upload a 28&times;28 CSV of pixel intensities on the
-    <a href="{% url 'mock_result' %}">classify page</a> and the network will tell you what it
+    <a href="{% url 'classify' %}">classify page</a> and the network will tell you what it
     sees.
   </p>
 
