@@ -1,76 +1,79 @@
 """
-Views.
+Views.  OWNER: Person C (Backend).
 
-OWNER: Person C (Backend)
-
-Nobody else edits this file. If you need something here, message Person C.
-
-Right now this contains two temporary views:
-  * home()        -- a smoke test that proves TensorFlow imports (delete later)
-  * mock_result() -- fake data so Person D can build the result page today
-
-Person C replaces these with the real classify() view in Sessions C2-C4.
+Every view here is behind @login_required (requirement 1c).
 """
 
-import random
+import logging
 
-from django.http import HttpResponse
+import numpy as np
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.views.decorators.http import require_http_methods
+
+from .ml.predictor import predict
+from .validation import UploadError, parse_upload, to_data_uri
+
+logger = logging.getLogger(__name__)
+
+RESULT_TEMPLATE = "classifier/result.html"
 
 
+def _context(prediction=None, confidence=None, probabilities=None,
+             image_uri="", error=None):
+    """The five-key contract with Person D's templates. Don't rename these."""
+    return {
+        "prediction": prediction,              # int 0-9
+        "confidence": confidence,              # float 0.0-1.0
+        "probabilities": probabilities or [],  # list of 10 floats
+        "image_uri": image_uri,                # "data:image/png;base64,..."
+        "error": error,                        # str or None
+    }
+
+
+@login_required
 def home(request):
-    """
-    TEMPORARY smoke test. Person C deletes this in Session C3.
+    """The write-up page."""
+    return render(request, "classifier/home.html")
 
-    The TensorFlow import is the entire point of this view. TensorFlow is the
-    heaviest thing we depend on and the most likely thing to fail on a small
-    AWS instance. Importing it in a page that does not use it forces that
-    failure to surface on day one, during kickoff, when there is nothing else
-    to blame -- rather than the night before the deadline when it could be any
-    one of a hundred things.
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def classify(request):
     """
+    GET  -> empty upload page (this is also what "Start over" links to).
+    POST -> validate the CSV, run the model, show the result on the same page.
+    """
+    if request.method == "GET":
+        return render(request, RESULT_TEMPLATE, _context())
+
+    upload = request.FILES.get("csv_file")
+    if upload is None:
+        return render(request, RESULT_TEMPLATE,
+                      _context(error="Choose a .csv file first."), status=400)
+
     try:
-        import tensorflow as tf
-        tf_status = f"TensorFlow {tf.__version__} imported successfully."
-        ok = True
-    except Exception as exc:                                  # noqa: BLE001
-        tf_status = f"TensorFlow FAILED to import: {exc}"
-        ok = False
+        arr = parse_upload(upload)
+    except UploadError as exc:
+        return render(request, RESULT_TEMPLATE,
+                      _context(error=str(exc)), status=400)
 
-    colour = "#166534" if ok else "#991b1b"
-    return HttpResponse(
-        "<div style='font-family:system-ui;max-width:34rem;margin:4rem auto'>"
-        "<h1 style='margin:0 0 .5rem'>Skeleton alive</h1>"
-        f"<p style='color:{colour};font-weight:600'>{tf_status}</p>"
-        "<p>If you can read this, Django is running and the environment is "
-        "correct. Next: <a href='/mock/'>/mock/</a> (Person D builds against "
-        "this).</p></div>"
-    )
+    try:
+        # float() converts numpy float32 -> plain Python float for the template
+        probs = [float(p) for p in predict(arr)]
+    except Exception:  # noqa: BLE001 -- never show the user a Django error page
+        logger.exception("Model prediction failed")
+        return render(
+            request, RESULT_TEMPLATE,
+            _context(error="Something went wrong classifying that image. "
+                           "Please try again."),
+            status=500,
+        )
 
-
-def mock_result(request):
-    """
-    TEMPORARY fake result page. Person C deletes this on integration day.
-
-    This exists so Person D can build and style the entire result page today,
-    without waiting for the real backend or the trained model. Refresh the page
-    for new random data.
-
-    The dictionary below IS the contract from TEAM_ACTION_PLAN.md section 4.
-    Person C's real view returns exactly these keys. Person D's template can
-    rely on them. Neither person changes them without telling the other.
-    """
-    probs = [random.random() for _ in range(10)]
-    winner = random.randrange(10)
-    probs[winner] += 6.0
-    total = sum(probs)
-    probs = [p / total for p in probs]
-
-    return render(request, "classifier/result.html", {
-        "prediction": winner,                    # int, 0-9
-        "confidence": probs[winner],             # float, 0.0-1.0
-        "probabilities": probs,                  # list of 10 floats
-        "image_uri": "",                         # data URI; empty in the mock
-        "error": None,                           # str or None
-        "is_mock": True,
-    })
+    prediction = int(np.argmax(probs))
+    return render(request, RESULT_TEMPLATE, _context(
+        prediction=prediction,
+        confidence=probs[prediction],
+        probabilities=probs,
+        image_uri=to_data_uri(arr),
+    ))
