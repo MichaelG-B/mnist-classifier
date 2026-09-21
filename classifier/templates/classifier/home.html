@@ -43,17 +43,14 @@
 
   <h2>The approach</h2>
   <p>
-    <!-- HARELLE: replace this paragraph with your architecture write-up.
-         Talk through the layers you tried, filter sizes/counts, pooling,
-         dropout, and what the validation split (0.2) showed you along the
-         way. Keep it in first person -- this is a lab notebook, not a spec
-         sheet. -->
-    We trained a convolutional network on MNIST using a validation split
-    rather than cross-validation, since retraining a CNN repeatedly for
-    cross-validation is slow. Several architectures were tried &mdash;
-    varying the number and size of convolutional filters, the number of
-    pooling layers, and the use of dropout &mdash; before settling on the
-    configuration described below.
+        We started with a CNN that used two convolutional layers, with 32 and 64
+    filters, followed by pooling, a dense layer, and dropout. We then tried
+    a deeper version with two convolutional layers in each block, batch
+    normalization, and dropout. We scaled the grayscale pixel values from
+    0–255 to 0–1 and used a validation set to compare the models during
+    training. The improved model performed better, so we saved it as our
+    final classifier. On the separate 10,000-image test set, it reached
+    99.59% accuracy.
   </p>
 
   <div class="margin-note">
@@ -69,16 +66,21 @@
 
   <h2>What worked, what didn't</h2>
   <p>
-    <!-- HARELLE: this is the "what worked well and what didn't" requirement
-         from the assignment. Be specific: which change moved the needle,
-         which didn't, and what you'd try next time. -->
-    Placeholder &mdash; swap in the real comparison of architectures here.
+         Our first CNN gave us a useful starting point. Adding a second
+    convolution to each block, batch normalization, and dropout improved
+    the model we selected for final testing. Watching validation accuracy
+    and loss helped us decide which saved version to use. The model still
+    made mistakes on some unusual handwritten digits, so adding more
+    training data that resembles those difficult examples would be worth
+    testing next.
   </p>
 
-  <h2>Where it gets confused</h2>
+  <h2>Where the model succeeds and struggles</h2>
   <p>
-    Of 10,000 test images, 41 were misclassified. Below are a few examples,
-    alongside the network's confidence for each of the ten digits.
+          The model correctly classified 9,959 of the 10,000 test images and
+    misclassified 41. The figures below show examples of both results.
+    Each label gives the true digit, the predicted digit, and the model's
+    confidence in its prediction.
   </p>
 
   <div class="figure-row">
@@ -93,12 +95,14 @@
   </div>
 
   <p>
-    <!-- HARELLE: answer "what are the common mix-ups and why" here. The
-         classic MNIST confusions are 4/9, 3/5/8, and 7/1 -- but write the
-         real answer from your confusion matrix, not the classic answer. -->
-    The most common confusions cluster around digits that share a stroke
-    shape when handwritten quickly &mdash; a placeholder answer until the
-    real confusion-matrix analysis is dropped in.
+          The confusion matrix shows that errors were rare and spread across
+    several digits. The most frequent mix-up was a handwritten 5 read
+    as a 3, which happened four times. The model also read a 6 as a 5,
+    a 9 as a 4, and a 7 as a 2 three times each. These digits can share
+    similar curves or strokes, especially when handwriting is faint,
+    incomplete, or unusually shaped. Some wrong predictions had high
+    confidence, reminding us that confidence alone does not guarantee
+    a correct answer.
   </p>
 
   <figure>
@@ -108,9 +112,13 @@
 
   <h2>Will we ever hit 100%?</h2>
   <p>
-    <!-- HARELLE: your actual answer to "do you think it would ever be
-         possible to get 100% accuracy" goes here. -->
-    Placeholder &mdash; swap in your reasoning here.
+          We do not expect 100% accuracy on every new handwritten digit.
+    Handwriting varies, and some images are faint, incomplete, or difficult
+    even for a person to read. Our model correctly classified 9,959 of
+    10,000 test images, but the remaining 41 show that similar-looking
+    digits can still cause errors. More examples of difficult handwriting
+    might improve performance, but a perfect result on one test set would
+    not guarantee perfect predictions on future images.
   </p>
 
   <h2>Try it yourself</h2>
