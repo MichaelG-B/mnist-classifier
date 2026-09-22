@@ -1,22 +1,18 @@
 #!/bin/bash
-# OWNER: Person A. Run on the AWS machine:  ./deploy.sh
+# OWNER: Person A. Redeploys the site on the Lightsail server.
+# Usage on the server:  ~/deploy.sh
 set -e
 
 cd ~/mnist-classifier
-echo ">>> Pulling latest code"
 git pull origin main
 
-echo ">>> Stopping old container (ignore errors if none running)"
-docker stop site 2>/dev/null || true
-docker rm site 2>/dev/null || true
+sudo docker compose down
 
-echo ">>> Building image (5-15 min on a small instance)"
-docker build -t mnist-site .
+# --network=host: the Bitnami image's firewall drops forwarded traffic, so
+# containers on Docker's default bridge have no outbound internet and pip
+# cannot reach PyPI. Building on the host's network stack sidesteps that.
+sudo docker build --network=host -t mnist-classifier-web .
 
-echo ">>> Starting container"
-docker run -d -p 8000:8000 --restart unless-stopped --name site mnist-site
-
-sleep 3
-docker ps
-echo ""
-echo ">>> Deployed. Check the tunnel is alive:  tmux attach -t tunnel"
+sudo docker compose up -d
+sudo docker compose ps
+echo "Deployed."

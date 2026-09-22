@@ -5,3 +5,5 @@ db.sqlite3
 .git/
 notebooks/
 .DS_Store
+
+data/
