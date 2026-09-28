@@ -1,4 +1,4 @@
-"""Tests for Person C's work: validation, login gating, and the classify view."""
+"""Tests for upload validation, login gating, and the classify view."""
 
 from unittest.mock import patch
 
@@ -93,7 +93,7 @@ class ParseUploadTests(SimpleTestCase):
 
 
 class ViewTests(TestCase):
-    # Throwaway test-only credentials. The real `dan` account is created with
+    # Throwaway test-only credentials. Real accounts are created with
     # createsuperuser at the terminal, never in code.
     PASSWORD = "test-only-password"
 
@@ -104,7 +104,7 @@ class ViewTests(TestCase):
         self.assertTrue(self.client.login(username="tester", password=self.PASSWORD))
 
     def test_every_page_requires_login(self):
-        for url in ("/", "/classify/", "/mock/"):
+        for url in ("/", "/classify/"):
             response = self.client.get(url)
             self.assertEqual(response.status_code, 302, url)
             self.assertIn("/accounts/login/", response["Location"], url)

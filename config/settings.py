@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+from django.core.management.utils import get_random_secret_key
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,11 +22,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-g88a*&=vqxth0clny6=jk(2d&3he40xl0f^pkj!cxd&6th^&9r'
+# Read from the environment so no secret lives in the repository. If it is not
+# set, a random key is generated at startup; the only side effect is that
+# existing logins are signed out when the server restarts.
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY") or get_random_secret_key()
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Set DJANGO_DEBUG=false to turn debug mode off. It defaults to on because the
+# site is served with runserver, which only serves static files in debug mode.
+DEBUG = os.environ.get("DJANGO_DEBUG", "true").lower() == "true"
 
 ALLOWED_HOSTS = ["*"]
 
@@ -38,8 +43,6 @@ CSRF_TRUSTED_ORIGINS = [
     "https://*.ngrok.app",
     "https://*.ngrok-free.dev",
 ]
-LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/accounts/login/"
 
 
 # Application definition

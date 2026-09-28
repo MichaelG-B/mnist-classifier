@@ -1,5 +1,5 @@
 #!/bin/bash
-# OWNER: Person A. Redeploys the site on the Lightsail server.
+# Redeploys the site on the Lightsail server.
 # Usage on the server:  ~/deploy.sh
 set -e
 

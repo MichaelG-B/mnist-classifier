@@ -1,5 +1,5 @@
 """
-Upload validation for the classify page.  OWNER: Person C.
+Upload validation for the classify page.
 
 Kept separate from views.py on purpose: this file has no Django or TensorFlow
 imports, so it can be tested and read on its own.

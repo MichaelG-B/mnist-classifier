@@ -1,5 +1,5 @@
 """
-Views.  OWNER: Person C (Backend).
+Views for the write-up and classify pages.
 
 Every view here is behind @login_required (requirement 1c).
 """
@@ -21,7 +21,7 @@ RESULT_TEMPLATE = "classifier/result.html"
 
 def _context(prediction=None, confidence=None, probabilities=None,
              image_uri="", error=None):
-    """The five-key contract with Person D's templates. Don't rename these."""
+    """Context for result.html. The template relies on these five keys."""
     return {
         "prediction": prediction,              # int 0-9
         "confidence": confidence,              # float 0.0-1.0
