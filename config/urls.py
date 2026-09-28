@@ -1,4 +1,4 @@
-"""Project-wide URL routes.  OWNER: Person C."""
+"""Project-wide URL routes."""
 
 from django.contrib import admin
 from django.urls import include, path

@@ -4,7 +4,7 @@ A convolutional neural network that reads handwritten digits, wrapped in a
 password-protected Django site where you can upload your own 28×28 image and
 watch the network classify it.
 
-**Live site:** https://hunger-remover-radiation.ngrok-free.dev
+**Live site:** https://hunger-remover-radiation.ngrok-free.dev (login required)
 **Test accuracy:** 99.59% on the MNIST test set (9,959 of 10,000 correct)
 
 Group Project 1 — Image Classification
@@ -124,5 +124,3 @@ First-time server setup, and the problems worth knowing about:
 - **CSRF.** ngrok's free domain is `*.ngrok-free.dev`. It is listed in
   `CSRF_TRUSTED_ORIGINS`; without it, login returns a 403 through the public
   URL while working fine locally.
-
-**Delete the Lightsail instance at the end of the semester.**
